@@ -18,11 +18,19 @@ std::unordered_map<std::string, size_t> topic_map;
 void sub_callback(const zn_sample * sample) {
     std::lock_guard<std::mutex> guard(sub_callback_mutex);
 
-    printf(">>> Received %d bytes on %.*s: '%s'\n",
+    printf(">>> Received %d bytes on %.*s: '%.*s'",
            sample->value.len,
            sample->key.len,
            sample->key.val,
+           sample->value.len,
            sample->value.val);
+    if (strncmp((char*)sample->value.val + sample->value.len - 5,
+                sample->key.val + sample->key.len - 5,
+                5) != 0) {
+      printf("\t<---- Mismatched topics\n");
+    } else {
+      printf("\n");
+    }
 }
 
 int main(int argc, char** argv) {
@@ -37,9 +45,10 @@ int main(int argc, char** argv) {
 
     sleep(1);
 
-    if (argc > 1)
+    std::string whoami(argv[1]);
+    if (argc > 2)
     {
-      for (int i = 1; i < argc; i++) {
+      for (int i = 2; i < argc; i++) {
         key_expr = argv[i];
         topic_map[std::string(key_expr)] = zn_declare_resource(s, key_expr);
         zn_declare_subscriber(s, key_expr, zn_subinfo_default(), sub_callback);
@@ -56,10 +65,10 @@ int main(int argc, char** argv) {
 
     for (auto i = 0; i < 3; ++i) {
       for (std::pair<std::string, size_t> element : topic_map) {
-        std::string msg = "This message was published to " + element.first + " " + std::to_string(i);
+        std::string msg = "Message #" + std::to_string(i) + " from " + whoami + " to topic " + element.first;
 
         zn_write_wrid(s, element.second, msg.c_str(), strlen(msg.c_str()));
-        printf("<<< Published %d bytes to %s: '%s'\n", msg.length(), element.first.c_str(), msg.c_str());
+        printf("<<< Published %ld bytes to %s: '%s'\n", msg.length(), element.first.c_str(), msg.c_str());
       }
       sleep(3);
       printf("\n");

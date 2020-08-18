@@ -13,11 +13,19 @@ std::mutex sub_callback_mutex;
 void sub_callback(const zn_sample * sample) {
     std::lock_guard<std::mutex> guard(sub_callback_mutex);
 
-    printf(">>> Received %d bytes on %.*s: '%s'\n",
+    printf(">>> Received %d bytes on %.*s: '%.*s'",
            sample->value.len,
            sample->key.len,
            sample->key.val,
+           sample->value.len,
            sample->value.val);
+    if (strncmp((char*)sample->value.val + sample->value.len - 5,
+                sample->key.val + sample->key.len - 5,
+                5) != 0) {
+      printf("\t<---- Mismatched topics\n");
+    } else {
+      printf("\n");
+    }
 }
 
 int main(int argc, char** argv) {
