@@ -45,7 +45,6 @@ int main(int argc, char** argv) {
 
     sleep(1);
 
-    std::string whoami(argv[1]);
     if (argc > 1)
     {
       for (int i = 1; i < argc; i++) {
@@ -65,7 +64,10 @@ int main(int argc, char** argv) {
 
     for (auto i = 0; i < 3; ++i) {
       for (std::pair<std::string, size_t> element : topic_map) {
-        std::string msg = "Message #" + std::to_string(i) + " from " + whoami + " to topic " + element.first;
+        std::string msg = "Message #" + std::to_string(i) + " from " + std::string(element.first)
+                          + " (" + std::to_string(element.second) + ")"
+                          + " to topic "
+                          + element.first;
 
         zn_write_wrid(s, element.second, msg.c_str(), strlen(msg.c_str()));
         printf("<<< Published %ld bytes to %s: '%s'\n", msg.length(), element.first.c_str(), msg.c_str());
