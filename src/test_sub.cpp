@@ -13,16 +13,11 @@ std::mutex sub_callback_mutex;
 void sub_callback(const zn_sample * sample) {
     std::lock_guard<std::mutex> guard(sub_callback_mutex);
 
-    printf("\n>> Received on: %.*s, %d\n( ",
+    printf(">>> Received %d bytes on %.*s: '%s'\n",
+           sample->value.len,
            sample->key.len,
            sample->key.val,
-           sample->value.len);
-
-    for (int i = 0 ; i < sample->value.len; i++) {
-      printf("%02x ",*(sample->value.val + i));
-    }
-
-    printf(")\n");
+           sample->value.val);
 }
 
 int main(int argc, char** argv) {

@@ -18,16 +18,11 @@ std::unordered_map<std::string, size_t> topic_map;
 void sub_callback(const zn_sample * sample) {
     std::lock_guard<std::mutex> guard(sub_callback_mutex);
 
-    printf("\n>> Received on: %.*s, %d\n( ",
+    printf(">>> Received %d bytes on %.*s: '%s'\n",
+           sample->value.len,
            sample->key.len,
            sample->key.val,
-           sample->value.len);
-
-    for (int i = 0 ; i < sample->value.len; i++) {
-      printf("%02x ",*(sample->value.val + i));
-    }
-
-    printf(")\n");
+           sample->value.val);
 }
 
 int main(int argc, char** argv) {
@@ -57,19 +52,17 @@ int main(int argc, char** argv) {
 
       printf("Subscription expression to %s (%ld)\n", key_expr, topic_map[std::string(key_expr)]);
     }
+    printf("\n");
 
-    for (int i = 0; i < 3; i++)
-    {
+    for (auto i = 0; i < 3; ++i) {
       for (std::pair<std::string, size_t> element : topic_map) {
-        std::string msg = "hello world from " + element.first + " " + std::to_string(i);
+        std::string msg = "This message was published to " + element.first + " " + std::to_string(i);
 
-        zn_write_wrid(s,
-                      element.second,
-                      msg.c_str(),
-                      strlen(msg.c_str()));
-        printf("PUBLISHED TO %s (%ld): %s\n", element.first.c_str(), element.second, msg.c_str());
+        zn_write_wrid(s, element.second, msg.c_str(), strlen(msg.c_str()));
+        printf("<<< Published %d bytes to %s: '%s'\n", msg.length(), element.first.c_str(), msg.c_str());
       }
       sleep(3);
+      printf("\n");
     }
 
     // char ch;
