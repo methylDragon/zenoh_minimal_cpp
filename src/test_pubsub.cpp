@@ -46,9 +46,9 @@ int main(int argc, char** argv) {
     sleep(1);
 
     std::string whoami(argv[1]);
-    if (argc > 2)
+    if (argc > 1)
     {
-      for (int i = 2; i < argc; i++) {
+      for (int i = 1; i < argc; i++) {
         key_expr = argv[i];
         topic_map[std::string(key_expr)] = zn_declare_resource(s, key_expr);
         zn_declare_subscriber(s, key_expr, zn_subinfo_default(), sub_callback);
