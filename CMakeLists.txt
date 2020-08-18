@@ -15,33 +15,30 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-find_package(ament_cmake REQUIRED)
-find_package(zenoh_ament REQUIRED)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 include_directories(include)
 
-add_executable(session_test src/session_test.cpp)
-ament_target_dependencies(session_test zenoh_ament)
-
 add_executable(session_test_string src/session_test_string.cpp)
-ament_target_dependencies(session_test_string zenoh_ament)
+target_link_libraries(session_test_string ${CMAKE_SOURCE_DIR}/lib/libzenoh_ffi.so)
 
 add_executable(test_sub src/test_sub.cpp)
-ament_target_dependencies(test_sub zenoh_ament)
+target_link_libraries(test_sub ${CMAKE_SOURCE_DIR}/lib/libzenoh_ffi.so)
 
 add_executable(test_pub src/test_pub.cpp)
-ament_target_dependencies(test_pub zenoh_ament)
+target_link_libraries(test_pub ${CMAKE_SOURCE_DIR}/lib/libzenoh_ffi.so)
 
 add_executable(test_pubsub src/test_pubsub.cpp)
-ament_target_dependencies(test_pubsub zenoh_ament)
+target_link_libraries(test_pubsub ${CMAKE_SOURCE_DIR}/lib/libzenoh_ffi.so)
+
+message("HELLO ${CMAKE_INSTALL_PREFIX}")
 
 install(TARGETS
   session_test_string
-  session_test
   test_sub
   test_pub
   test_pubsub
-  DESTINATION lib/${PROJECT_NAME}
+  DESTINATION ${CMAKE_SOURCE_DIR}/built/${PROJECT_NAME}
 )
-
-ament_package()
