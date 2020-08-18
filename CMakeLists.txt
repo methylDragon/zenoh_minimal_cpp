@@ -32,13 +32,3 @@ target_link_libraries(test_pub ${CMAKE_SOURCE_DIR}/lib/libzenoh_ffi.so)
 
 add_executable(test_pubsub src/test_pubsub.cpp)
 target_link_libraries(test_pubsub ${CMAKE_SOURCE_DIR}/lib/libzenoh_ffi.so)
-
-message("HELLO ${CMAKE_INSTALL_PREFIX}")
-
-install(TARGETS
-  session_test_string
-  test_sub
-  test_pub
-  test_pubsub
-  DESTINATION ${CMAKE_SOURCE_DIR}/built/${PROJECT_NAME}
-)
