@@ -1,7 +1,7 @@
-#include <stdlib.h>
-#include <stdio.h>
 #include <unistd.h>
-#include <string.h>
+
+#include <cstring>
+#include <string>
 #include <mutex>
 
 extern "C" {
@@ -9,6 +9,7 @@ extern "C" {
 }
 
 std::mutex sub_callback_mutex;
+std::string key_expr("/test");
 
 void sub_callback(const zn_sample * sample) {
     std::lock_guard<std::mutex> guard(sub_callback_mutex);
@@ -29,8 +30,6 @@ void sub_callback(const zn_sample * sample) {
 }
 
 int main(int argc, char** argv) {
-    char *key_expr = "/test";
-
     ZNSession *s = zn_open(PEER, 0, 0);
 
     if (s == 0) {
@@ -44,21 +43,13 @@ int main(int argc, char** argv) {
     {
       for (int i = 1; i < argc; i++) {
         key_expr = argv[i];
-        zn_declare_subscriber(s, key_expr, zn_subinfo_default(), sub_callback);
-        printf("Subscription expression to %s\n", key_expr);
+        zn_declare_subscriber(s, key_expr.c_str(), zn_subinfo_default(), sub_callback);
+        printf("Subscription expression to %s\n", key_expr.c_str());
       }
     } else {
-      zn_declare_subscriber(s, key_expr, zn_subinfo_default(), sub_callback);
-      printf("Subscription expression to %s\n", key_expr);
+      zn_declare_subscriber(s, key_expr.c_str(), zn_subinfo_default(), sub_callback);
+      printf("Subscription expression to %s\n", key_expr.c_str());
     }
-
-    // int count = 0;
-    // while (count < 10)
-    // {
-    //   count++;
-    //   printf("%d", count);
-    //   sleep(1);
-    // }
 
     char ch;
     read(0, &ch, 1);
