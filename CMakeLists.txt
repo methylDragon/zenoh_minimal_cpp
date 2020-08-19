@@ -29,18 +29,30 @@ ament_target_dependencies(session_test_string zenoh_ament)
 add_executable(test_sub src/test_sub.cpp)
 ament_target_dependencies(test_sub zenoh_ament)
 
+add_executable(test_sub_bytes src/test_sub_bytes.cpp)
+ament_target_dependencies(test_sub_bytes zenoh_ament)
+
 add_executable(test_pub src/test_pub.cpp)
 ament_target_dependencies(test_pub zenoh_ament)
 
 add_executable(test_pubsub src/test_pubsub.cpp)
 ament_target_dependencies(test_pubsub zenoh_ament)
 
+add_executable(test_queryable src/test_queryable.cpp)
+ament_target_dependencies(test_queryable zenoh_ament)
+
+add_executable(test_query src/test_query.cpp)
+ament_target_dependencies(test_query zenoh_ament)
+
 install(TARGETS
   session_test_string
   session_test
   test_sub
+  test_sub_bytes
   test_pub
   test_pubsub
+  test_query
+  test_queryable
   DESTINATION lib/${PROJECT_NAME}
 )
 
