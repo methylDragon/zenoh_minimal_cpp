@@ -14,7 +14,9 @@ void replier(ZNQuery *query) {
 
     printf("Received query: %.*s:%.*s\n", res->len, res->val, pred->len, pred->val);
 
-    zn_send_reply(query, key_expr.c_str(), (const unsigned char *)value.c_str(), value.length());
+    std::string key(res->val, res->len);
+
+    zn_send_reply(query, key.c_str(), (const unsigned char *)value.c_str(), value.length());
 }
 
 int main(int argc, char** argv) {
@@ -33,7 +35,7 @@ int main(int argc, char** argv) {
     }
     printf("Subscription expression to %s\n", key_expr.c_str());
 
-    q = zn_declare_queryable(s, key_expr.c_str(), EVAL, replier);
+    q = zn_declare_queryable(s, key_expr.c_str(), STORAGE, replier);
     if (q == 0) {
         printf("Unable to register queryable\n");
         return -1;
